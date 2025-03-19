@@ -1,14 +1,14 @@
 import * as fs from "fs";
 
-const orientation = ["N", "E", "S", "W"] as const;
-type Orientation = (typeof orientation)[number];
+const CARDINAL_DIRECTIONS = ["N", "E", "S", "W"] as const;
+type Direction = (typeof CARDINAL_DIRECTIONS)[number];
 
 type Position = {
   x: number;
   y: number;
 };
 
-const MOVEMENTS: Record<Orientation, { x: number; y: number }> = {
+const movements: Record<Direction, { x: number; y: number }> = {
   N: { x: 0, y: 1 },
   E: { x: 1, y: 0 },
   S: { x: 0, y: -1 },
@@ -17,16 +17,16 @@ const MOVEMENTS: Record<Orientation, { x: number; y: number }> = {
 
 class Mower {
   position: Position;
-  orientation: Orientation;
+  direction: Direction;
 
   constructor(
     initialPosition: Position,
-    initialOrientation: Orientation,
+    initialDirection: Direction,
     private maxX: number,
     private maxY: number,
   ) {
     this.position = initialPosition;
-    this.orientation = initialOrientation;
+    this.direction = initialDirection;
   }
 
   execute(instructions: string): void {
@@ -39,21 +39,21 @@ class Mower {
         this.moveForward();
       }
     }
-    console.log(`${this.position.x} ${this.position.y} ${this.orientation}`);
+    console.log(`${this.position.x} ${this.position.y} ${this.direction}`);
   }
 
   private turnLeft(): void {
-    const currentIndex = orientation.indexOf(this.orientation);
-    this.orientation = orientation[(currentIndex + 3) % 4];
+    const currentIndex = CARDINAL_DIRECTIONS.indexOf(this.direction);
+    this.direction = CARDINAL_DIRECTIONS[(currentIndex + 3) % 4];
   }
 
   private turnRight(): void {
-    const currentIndex = orientation.indexOf(this.orientation);
-    this.orientation = orientation[(currentIndex + 1) % 4];
+    const currentIndex = CARDINAL_DIRECTIONS.indexOf(this.direction);
+    this.direction = CARDINAL_DIRECTIONS[(currentIndex + 1) % 4];
   }
 
   private moveForward(): void {
-    const movement = MOVEMENTS[this.orientation];
+    const movement = movements[this.direction];
     const newX = this.position.x + movement.x;
     const newY = this.position.y + movement.y;
 
@@ -69,7 +69,7 @@ function parseInput(filePath: string): {
   maxY: number;
   mowers: {
     initialPosition: Position;
-    initialOrientation: Orientation;
+    initialDirection: Direction;
     instructions: string;
   }[];
 } {
@@ -77,15 +77,15 @@ function parseInput(filePath: string): {
   const [maxX, maxY] = lines[0].split(" ").map(Number);
   const mowers: {
     initialPosition: Position;
-    initialOrientation: Orientation;
+    initialDirection: Direction;
     instructions: string;
   }[] = [];
 
   for (let i = 1; i < lines.length; i += 2) {
-    const [x, y, orientation] = lines[i].split(" ");
+    const [x, y, direction] = lines[i].split(" ");
     mowers.push({
       initialPosition: { x: Number(x), y: Number(y) } as Position,
-      initialOrientation: orientation as Orientation,
+      initialDirection: direction as Direction,
       instructions: lines[i + 1],
     });
   }
@@ -96,21 +96,11 @@ function parseInput(filePath: string): {
 function main(filePath: string) {
   const { maxX, maxY, mowers } = parseInput(filePath);
 
-  for (const { initialPosition, initialOrientation, instructions } of mowers) {
-    const mower = new Mower(initialPosition, initialOrientation, maxX, maxY);
+  for (const { initialPosition, initialDirection, instructions } of mowers) {
+    const mower = new Mower(initialPosition, initialDirection, maxX, maxY);
     mower.execute(instructions);
   }
 }
 
 const filePath = "input.txt";
 main(filePath);
-
-// 5 5
-// 1 2 N
-// LFLFLFLFF
-// 3 3 E
-// FFRFFRFRRF
-
-// expect
-// 1 3 N
-// 5 1 E
