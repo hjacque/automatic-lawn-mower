@@ -93,7 +93,13 @@ function parseInput(filePath: string): {
   return { maxX, maxY, mowers };
 }
 
-function main(filePath: string) {
+function main() {
+  const filePath = process.argv[2];
+  if (!filePath) {
+    console.error("Usage: npm start -- <input_file>");
+    process.exit(1);
+  }
+
   const { maxX, maxY, mowers } = parseInput(filePath);
 
   for (const { initialPosition, initialDirection, instructions } of mowers) {
@@ -102,5 +108,4 @@ function main(filePath: string) {
   }
 }
 
-const filePath = "input.txt";
-main(filePath);
+main();
