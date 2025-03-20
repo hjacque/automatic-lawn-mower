@@ -1,4 +1,11 @@
-import { Mower } from "./index";
+import { Mower, createLawn } from "./index";
+import type { Lawn } from "./index";
+
+class LawnFactory {
+  static generate(maxX: number, maxY: number): Lawn {
+    return createLawn(maxX, maxY);
+  }
+}
 
 describe("Mower", () => {
   let consoleSpy: jest.SpyInstance;
@@ -10,7 +17,8 @@ describe("Mower", () => {
   });
 
   it("should not move outside the lawn", () => {
-    const mower = new Mower({ x: 0, y: 0 }, "S", 1, 1);
+    const lawn = LawnFactory.generate(0, 0);
+    const mower = new Mower({ x: 0, y: 0 }, "S", lawn);
     mower.execute("FF");
 
     expect(mower.position).toEqual({ x: 0, y: 0 });
@@ -18,17 +26,17 @@ describe("Mower", () => {
   });
 
   it("should execute a sequence of instructions", () => {
-    const mower1 = new Mower({ x: 1, y: 2 }, "N", 5, 5);
+    const lawn = LawnFactory.generate(5, 5);
+    const mower1 = new Mower({ x: 1, y: 2 }, "N", lawn);
     mower1.execute("LFLFLFLFF");
     expect(mower1.position).toEqual({ x: 1, y: 3 });
     expect(mower1.direction).toBe("N");
     expect(consoleSpy).toHaveBeenCalledWith("1 3 N");
 
-    const mower2 = new Mower({ x: 3, y: 3 }, "E", 5, 5);
+    const mower2 = new Mower({ x: 3, y: 3 }, "E", lawn);
     mower2.execute("FFRFFRFRRF");
     expect(mower2.position).toEqual({ x: 5, y: 1 });
     expect(mower2.direction).toBe("E");
     expect(consoleSpy).toHaveBeenCalledWith("5 1 E");
   });
 });
-

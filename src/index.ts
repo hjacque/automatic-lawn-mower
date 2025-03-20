@@ -1,5 +1,12 @@
 import * as fs from "fs";
 
+enum GrassState {
+  Regular = 1,
+  Mowed = 0,
+}
+
+export type Lawn = GrassState[][];
+
 const CARDINAL_DIRECTIONS = ["N", "E", "S", "W"] as const;
 type Direction = (typeof CARDINAL_DIRECTIONS)[number];
 
@@ -18,18 +25,22 @@ const movements: Record<Direction, { mx: number; my: number }> = {
 export class Mower {
   position: Position;
   direction: Direction;
+  lawn: Lawn;
 
   constructor(
     initialPosition: Position,
     initialDirection: Direction,
-    private maxX: number,
-    private maxY: number,
+    lawn: Lawn,
   ) {
     this.position = initialPosition;
     this.direction = initialDirection;
+    this.lawn = lawn;
+    this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
+      this.position.x
+    ] = GrassState.Mowed;
   }
 
-  execute(instructions: string): void {
+  execute(instructions: string): Lawn {
     for (const instruction of instructions) {
       switch (instruction) {
         case "L":
@@ -47,6 +58,7 @@ export class Mower {
       }
     }
     console.log(`${this.position.x} ${this.position.y} ${this.direction}`);
+    return this.lawn;
   }
 
   private turnLeft(): void {
@@ -64,13 +76,19 @@ export class Mower {
 
     if (mx) {
       const newX = this.position.x + mx;
-      if (newX >= 0 && newX <= this.maxX) {
+      if (newX >= 0 && this.lawn[this.position.y][newX] !== undefined) {
         this.position.x = newX;
+        this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
+          this.position.x
+        ] = GrassState.Mowed;
       }
     } else if (my) {
       const newY = this.position.y + my;
-      if (newY >= 0 && newY <= this.maxY) {
+      if (newY >= 0 && this.lawn[newY][this.position.x] !== undefined) {
         this.position.y = newY;
+        this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
+          this.position.x
+        ] = GrassState.Mowed;
       }
     }
   }
@@ -107,6 +125,12 @@ function parseInput(input: string[]): {
   return { maxX, maxY, mowersDriveData };
 }
 
+export function createLawn(maxX: number, maxY: number): Lawn {
+  return Array.from({ length: maxY + 1 }, () =>
+    Array(maxX + 1).fill(GrassState.Regular),
+  );
+}
+
 function main() {
   const filePath = process.argv[2];
   if (!filePath) {
@@ -116,9 +140,14 @@ function main() {
 
   const input = readFileContent(filePath);
   const { maxX, maxY, mowersDriveData } = parseInput(input);
+  const lawn = createLawn(maxX, maxY);
 
-  for (const { initialPosition, initialDirection, instructions } of mowersDriveData) {
-    const mower = new Mower(initialPosition, initialDirection, maxX, maxY);
+  for (const {
+    initialPosition,
+    initialDirection,
+    instructions,
+  } of mowersDriveData) {
+    const mower = new Mower(initialPosition, initialDirection, lawn);
     mower.execute(instructions);
   }
 }
