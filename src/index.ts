@@ -64,33 +64,35 @@ export class Mower {
   }
 }
 
-function parseInput(filePath: string): {
+function readFileContent(filePath: string): string[] {
+  const lines = fs.readFileSync(filePath, "utf-8").split("\n");
+  return lines;
+}
+
+type MowerDriveData = {
+  initialPosition: Position;
+  initialDirection: Direction;
+  instructions: string;
+};
+
+function parseInput(input: string[]): {
   maxX: number;
   maxY: number;
-  mowers: {
-    initialPosition: Position;
-    initialDirection: Direction;
-    instructions: string;
-  }[];
+  mowersDriveData: MowerDriveData[];
 } {
-  const lines = fs.readFileSync(filePath, "utf-8").split("\n");
-  const [maxX, maxY] = lines[0].split(" ").map(Number);
-  const mowers: {
-    initialPosition: Position;
-    initialDirection: Direction;
-    instructions: string;
-  }[] = [];
+  const [maxX, maxY] = input[0].split(" ").map(Number);
+  const mowersDriveData: MowerDriveData[] = [];
 
-  for (let i = 1; i < lines.length; i += 2) {
-    const [x, y, direction] = lines[i].split(" ");
-    mowers.push({
+  for (let i = 1; i < input.length; i += 2) {
+    const [x, y, direction] = input[i].split(" ");
+    mowersDriveData.push({
       initialPosition: { x: Number(x), y: Number(y) } as Position,
       initialDirection: direction as Direction,
-      instructions: lines[i + 1],
+      instructions: input[i + 1],
     });
   }
 
-  return { maxX, maxY, mowers };
+  return { maxX, maxY, mowersDriveData };
 }
 
 function main() {
@@ -100,9 +102,10 @@ function main() {
     process.exit(1);
   }
 
-  const { maxX, maxY, mowers } = parseInput(filePath);
+  const input = readFileContent(filePath);
+  const { maxX, maxY, mowersDriveData } = parseInput(input);
 
-  for (const { initialPosition, initialDirection, instructions } of mowers) {
+  for (const { initialPosition, initialDirection, instructions } of mowersDriveData) {
     const mower = new Mower(initialPosition, initialDirection, maxX, maxY);
     mower.execute(instructions);
   }
