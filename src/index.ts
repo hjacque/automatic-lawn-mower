@@ -8,11 +8,11 @@ type Position = {
   y: number;
 };
 
-const movements: Record<Direction, { x: number; y: number }> = {
-  N: { x: 0, y: 1 },
-  E: { x: 1, y: 0 },
-  S: { x: 0, y: -1 },
-  W: { x: -1, y: 0 },
+const movements: Record<Direction, { mx: number; my: number }> = {
+  N: { mx: 0, my: 1 },
+  E: { mx: 1, my: 0 },
+  S: { mx: 0, my: -1 },
+  W: { mx: -1, my: 0 },
 };
 
 export class Mower {
@@ -53,13 +53,18 @@ export class Mower {
   }
 
   private moveForward(): void {
-    const movement = movements[this.direction];
-    const newX = this.position.x + movement.x;
-    const newY = this.position.y + movement.y;
+    const { mx, my } = movements[this.direction];
 
-    if (newX >= 0 && newX <= this.maxX && newY >= 0 && newY <= this.maxY) {
-      this.position.x = newX;
-      this.position.y = newY;
+    if (mx) {
+      const newX = this.position.x + mx;
+      if (newX >= 0 && newX <= this.maxX) {
+        this.position.x = newX;
+      }
+    } else if (my) {
+      const newY = this.position.y + my;
+      if (newY >= 0 && newY <= this.maxY) {
+        this.position.y = newY;
+      }
     }
   }
 }
