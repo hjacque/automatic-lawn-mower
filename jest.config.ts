@@ -1,3 +1,4 @@
-import { defaults as tsPreset } from "ts-jest/presets";
-
-module.exports = {};
+/** @type {import('ts-jest').JestConfigWithTsJest} **/
+module.exports = {
+  preset: "ts-jest",
+};

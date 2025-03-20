@@ -15,7 +15,7 @@ const movements: Record<Direction, { x: number; y: number }> = {
   W: { x: -1, y: 0 },
 };
 
-class Mower {
+export class Mower {
   position: Position;
   direction: Direction;
 
@@ -108,4 +108,6 @@ function main() {
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
