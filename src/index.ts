@@ -31,12 +31,19 @@ export class Mower {
 
   execute(instructions: string): void {
     for (const instruction of instructions) {
-      if (instruction === "L") {
-        this.turnLeft();
-      } else if (instruction === "R") {
-        this.turnRight();
-      } else if (instruction === "F") {
-        this.moveForward();
+      switch (instruction) {
+        case "L":
+          this.turnLeft();
+          break;
+        case "R":
+          this.turnRight();
+          break;
+        case "F":
+          this.moveForward();
+          break;
+        default:
+          console.error("Invalid instruction", instruction);
+          break;
       }
     }
     console.log(`${this.position.x} ${this.position.y} ${this.direction}`);
