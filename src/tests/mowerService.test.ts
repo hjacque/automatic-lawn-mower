@@ -1,13 +1,8 @@
-import { Mower, createLawn } from "./index";
-import type { Lawn } from "./index";
+import { LawnFactory } from "./factories/lawnFactory";
+import { MowerFactory } from "./factories/mowerFactory";
+import { MowerService } from "../services/mowerService";
 
-class LawnFactory {
-  static generate(maxX: number, maxY: number): Lawn {
-    return createLawn(maxX, maxY);
-  }
-}
-
-describe("Mower", () => {
+describe("MowerService", () => {
   let consoleSpy: jest.SpyInstance;
   beforeEach(() => {
     consoleSpy = jest.spyOn(console, "log").mockImplementation();
@@ -18,8 +13,8 @@ describe("Mower", () => {
 
   it("should not move outside the lawn", () => {
     const lawn = LawnFactory.generate(0, 0);
-    const mower = new Mower({ x: 0, y: 0 }, "S", lawn);
-    mower.execute("FF");
+    const mower = MowerFactory.generate({ x: 0, y: 0 }, "S", lawn);
+    MowerService.execute(mower, "FF");
 
     expect(mower.position).toEqual({ x: 0, y: 0 });
     expect(consoleSpy).toHaveBeenCalledWith("0 0 S");
@@ -27,8 +22,8 @@ describe("Mower", () => {
 
   it("should mow the entire surface", () => {
     const lawn = LawnFactory.generate(4, 5);
-    const mower = new Mower({ x: 0, y: 0 }, "N", lawn);
-    mower.execute("FFFFFFRFRFFFFFFLFLFFFFFFRFRFFFFFFLFLFFFFFF");
+    const mower = MowerFactory.generate({ x: 0, y: 0 }, "N", lawn);
+    MowerService.execute(mower, "FFFFFFRFRFFFFFFLFLFFFFFFRFRFFFFFFLFLFFFFFF");
 
     expect(mower.position).toEqual({ x: 4, y: 5 });
     expect(mower.lawn).toEqual([
@@ -44,14 +39,14 @@ describe("Mower", () => {
 
   it("should execute a sequence of instructions", () => {
     const lawn = LawnFactory.generate(5, 5);
-    const mower1 = new Mower({ x: 1, y: 2 }, "N", lawn);
-    mower1.execute("LFLFLFLFF");
+    const mower1 = MowerFactory.generate({ x: 1, y: 2 }, "N", lawn);
+    MowerService.execute(mower1, "LFLFLFLFF");
     expect(mower1.position).toEqual({ x: 1, y: 3 });
     expect(mower1.direction).toBe("N");
     expect(consoleSpy).toHaveBeenCalledWith("1 3 N");
 
-    const mower2 = new Mower({ x: 3, y: 3 }, "E", lawn);
-    mower2.execute("FFRFFRFRRF");
+    const mower2 = MowerFactory.generate({ x: 3, y: 3 }, "E", lawn);
+    MowerService.execute(mower2, "FFRFFRFRRF");
     expect(mower2.position).toEqual({ x: 5, y: 1 });
     expect(mower2.direction).toBe("E");
     expect(consoleSpy).toHaveBeenCalledWith("5 1 E");
