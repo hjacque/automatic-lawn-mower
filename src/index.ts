@@ -2,6 +2,7 @@ import { createLawn } from "./models/lawn";
 import { Mower } from "./models/mower";
 import { MowerService } from "./services/mowerService";
 import { parseInput } from "./utils/parseInput";
+import type { MowerDriveData } from "./utils/parseInput";
 import { readFileContent } from "./utils/readFileContent";
 
 function main() {
@@ -11,8 +12,22 @@ function main() {
     process.exit(1);
   }
 
-  const input = readFileContent(filePath);
-  const { maxX, maxY, mowersDriveData } = parseInput(input);
+  let input: string[];
+  try {
+    input = readFileContent(filePath);
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+
+  let maxX: number, maxY: number, mowersDriveData: MowerDriveData[];
+  try {
+    ({ maxX, maxY, mowersDriveData } = parseInput(input));
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+
   const lawn = createLawn(maxX, maxY);
 
   for (const {
