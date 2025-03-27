@@ -35,9 +35,8 @@ export class Mower {
     this.position = initialPosition;
     this.direction = initialDirection;
     this.lawn = lawn;
-    this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
-      this.position.x
-    ] = GrassState.Mowed;
+    this.lawn[this.lawn.length - this.position.y - 1][this.position.x] =
+      GrassState.Mowed;
   }
 
   execute(instructions: string): Lawn {
@@ -76,19 +75,20 @@ export class Mower {
 
     if (mx) {
       const newX = this.position.x + mx;
-      if (newX >= 0 && this.lawn[this.position.y][newX] !== undefined) {
+      if (
+        newX >= 0 &&
+        newX < this.lawn[this.lawn.length - this.position.y - 1].length
+      ) {
         this.position.x = newX;
-        this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
-          this.position.x
-        ] = GrassState.Mowed;
+        this.lawn[this.lawn.length - this.position.y - 1][this.position.x] =
+          GrassState.Mowed;
       }
     } else if (my) {
       const newY = this.position.y + my;
-      if (newY >= 0 && this.lawn[newY][this.position.x] !== undefined) {
+      if (newY >= 0 && newY < this.lawn.length) {
         this.position.y = newY;
-        this.lawn[Math.abs(this.position.y - this.lawn.length + 1)][
-          this.position.x
-        ] = GrassState.Mowed;
+        this.lawn[this.lawn.length - this.position.y - 1][this.position.x] =
+          GrassState.Mowed;
       }
     }
   }
