@@ -36,7 +36,7 @@ describe("MowerService", () => {
   it("should mow the entire surface", () => {
     const lawn = LawnFactory.generate(4, 5);
     const mower = MowerFactory.generate({ x: 0, y: 0 }, "N", lawn);
-    MowerService.execute(mower, "FFFFFFRFRFFFFFFLFLFFFFFFRFRFFFFFFLFLFFFFFF");
+    MowerService.execute(mower, "FFFFFRFRFFFFFLFLFFFFFRFRFFFFFLFLFFFFF");
 
     expect(mower.position).toEqual({ x: 4, y: 5 });
     expect(mower.lawn).toEqual([
