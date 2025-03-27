@@ -4,11 +4,15 @@ import { MowerService } from "../services/mowerService";
 
 describe("MowerService", () => {
   let consoleSpy: jest.SpyInstance;
+  let consoleErrorSpy: jest.SpyInstance;
+
   beforeEach(() => {
     consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
   });
   afterEach(() => {
     consoleSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
   });
 
   it("should not move outside the lawn", () => {
@@ -18,6 +22,15 @@ describe("MowerService", () => {
 
     expect(mower.position).toEqual({ x: 0, y: 0 });
     expect(consoleSpy).toHaveBeenCalledWith("0 0 S");
+  });
+
+  it("should log error invalid instructions", () => {
+    const lawn = LawnFactory.generate(0, 0);
+    const mower = MowerFactory.generate({ x: 0, y: 0 }, "S", lawn);
+    MowerService.execute(mower, "I");
+
+    expect(mower.position).toEqual({ x: 0, y: 0 });
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Invalid instruction", "I");
   });
 
   it("should mow the entire surface", () => {
