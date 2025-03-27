@@ -7,6 +7,6 @@ export type Lawn = GrassState[][];
 
 export function createLawn(maxX: number, maxY: number): Lawn {
   return Array.from({ length: maxY + 1 }, () =>
-    Array(maxX + 1).fill(GrassState.Regular)
+    Array(maxX + 1).fill(GrassState.Regular),
   );
 }

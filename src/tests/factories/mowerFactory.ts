@@ -7,7 +7,7 @@ export class MowerFactory {
   static generate(
     initialPosition: Position,
     initialDirection: Direction,
-    lawn: Lawn
+    lawn: Lawn,
   ): Mower {
     return new Mower(initialPosition, initialDirection, lawn);
   }

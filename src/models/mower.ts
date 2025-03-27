@@ -10,7 +10,7 @@ export class Mower {
   constructor(
     initialPosition: Position,
     initialDirection: Direction,
-    lawn: Lawn
+    lawn: Lawn,
   ) {
     this.position = initialPosition;
     this.direction = initialDirection;
