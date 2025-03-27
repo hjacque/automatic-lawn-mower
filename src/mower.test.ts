@@ -25,6 +25,23 @@ describe("Mower", () => {
     expect(consoleSpy).toHaveBeenCalledWith("0 0 S");
   });
 
+  it("should mow the entire surface", () => {
+    const lawn = LawnFactory.generate(4, 5);
+    const mower = new Mower({ x: 0, y: 0 }, "N", lawn);
+    mower.execute("FFFFFFRFRFFFFFFLFLFFFFFFRFRFFFFFFLFLFFFFFF");
+
+    expect(mower.position).toEqual({ x: 4, y: 5 });
+    expect(mower.lawn).toEqual([
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ]);
+    expect(consoleSpy).toHaveBeenCalledWith("4 5 N");
+  });
+
   it("should execute a sequence of instructions", () => {
     const lawn = LawnFactory.generate(5, 5);
     const mower1 = new Mower({ x: 1, y: 2 }, "N", lawn);
