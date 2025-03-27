@@ -11,7 +11,7 @@ const movements: Record<Direction, { mx: number; my: number }> = {
 };
 
 export class MowerService {
-  static execute(mower: Mower, instructions: string) {
+  static execute(mower: Mower, instructions: string): void {
     for (const instruction of instructions) {
       switch (instruction) {
         case "L":
